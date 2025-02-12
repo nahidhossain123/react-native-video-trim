@@ -4,7 +4,7 @@
  *
  * @format
  */
-
+import './gesture-handler'
 import React from 'react';
 ;
 import {
@@ -14,6 +14,8 @@ import {
 } from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import VideoTrimmer from './src/component/VideoTrimmer';
+import { NavigationContainer } from '@react-navigation/native';
+import { Navigation } from './src/navigation/appStackNavigator';
 
 
 function App(): React.JSX.Element {
@@ -24,9 +26,9 @@ function App(): React.JSX.Element {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <VideoTrimmer />
-    </SafeAreaView>
+    <NavigationContainer>
+      <Navigation />
+    </NavigationContainer>
   );
 }
 
