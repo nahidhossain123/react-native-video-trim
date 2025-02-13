@@ -1,10 +1,18 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }) => {
     return (
-        <View>
-            <Text>HomeScreen</Text>
+        <View >
+            <Pressable onPress={() => {
+                console.log('Clicking')
+                navigation.navigate('Edit')
+            }}>
+                <Text style={{ marginTop: 20 }} >Open Video</Text>
+            </Pressable>
+
+
+
         </View>
     )
 }

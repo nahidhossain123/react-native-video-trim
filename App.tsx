@@ -11,11 +11,15 @@ import {
   SafeAreaView,
   StyleSheet,
   useColorScheme,
+  View,
 } from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import VideoTrimmer from './src/component/VideoTrimmer';
 import { NavigationContainer } from '@react-navigation/native';
-import { Navigation } from './src/navigation/appStackNavigator';
+import StackNavigator from './src/navigation/StackNavigator';
+
+
+
 
 
 function App(): React.JSX.Element {
@@ -27,7 +31,7 @@ function App(): React.JSX.Element {
 
   return (
     <NavigationContainer>
-      <Navigation />
+      <StackNavigator />
     </NavigationContainer>
   );
 }

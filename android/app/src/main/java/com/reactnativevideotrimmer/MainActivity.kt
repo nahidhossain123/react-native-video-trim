@@ -14,9 +14,7 @@ class MainActivity : ReactActivity() {
   override fun getMainComponentName(): String = "ReactNativeVideoTrimmer"
 
   //Required for React native navigation--Added By Developer
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(null)
-  }
+
 
   /**
    * Returns the instance of the [ReactActivityDelegate]. We use [DefaultReactActivityDelegate]
