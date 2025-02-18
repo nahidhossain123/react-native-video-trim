@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import VideoTrimmer from '../component/VideoTrimmer'
 
-const EditScreen = () => {
+const EditScreen = ({ navigation }) => {
     return (
         <View style={{ flex: 1, backgroundColor: 'black' }}>
             <VideoTrimmer />

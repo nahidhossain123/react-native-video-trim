@@ -10,10 +10,13 @@ const StackNavigator = () => {
    <Stack.Navigator screenOptions={{headerShown:false}}>
     {/* <Stack.Screen name='SplashScreen' component={SplashScreen} /> */}
     <Stack.Screen name='Home' component={HomeScreen} />
-    <Stack.Screen name='Edit' component={EditScreen} />
+    <Stack.Screen name='Edit' component={EditScreen}    options={{
+          gestureEnabled: false,  // Disable swipe-back gesture
+        }} />
    </Stack.Navigator>
   )
 }
 
 export default StackNavigator
+
 
