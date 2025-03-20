@@ -1,15 +1,15 @@
 import { Button, Pressable, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-const ThemedButton = ({ onPress, children, style }) => {
+const ThemeButton = ({ onPress, children, style }) => {
   return (
-    <Pressable >
+    <Pressable onPress={onPress}>
       <Text style={[styles.buttonStyle, style]}>{children}</Text>
     </Pressable>
   )
 }
 
-export default ThemedButton
+export default ThemeButton
 
 const styles = StyleSheet.create({
   buttonStyle: {

@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-const ThemedText = ({ children, style }) => {
+const ThemeText = ({ children, style }) => {
     return (
         <View>
             <Text style={[styles.textStyle, style]}>{children}</Text>
@@ -9,7 +9,7 @@ const ThemedText = ({ children, style }) => {
     )
 }
 
-export default ThemedText
+export default ThemeText
 
 const styles = StyleSheet.create({
     textStyle: {

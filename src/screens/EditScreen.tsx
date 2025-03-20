@@ -2,10 +2,11 @@ import { StyleSheet, Text, View } from 'react-native'
 import React, { useEffect } from 'react'
 import VideoTrimmer from '../component/VideoTrimmer'
 
-const EditScreen = ({ navigation }) => {
+const EditScreen = ({ navigation, route }) => {
+    console.log("Router", route.params)
     return (
         <View style={{ flex: 1, backgroundColor: 'black' }}>
-            <VideoTrimmer />
+            <VideoTrimmer video={route.params} />
         </View>
     )
 }
