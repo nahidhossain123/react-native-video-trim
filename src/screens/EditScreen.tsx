@@ -6,7 +6,7 @@ const EditScreen = ({ navigation, route }) => {
     console.log("Router", route.params)
     return (
         <View style={{ flex: 1, backgroundColor: 'black' }}>
-            <VideoTrimmer video={route.params} />
+            <VideoTrimmer video={route.params} navigation={navigation} />
         </View>
     )
 }

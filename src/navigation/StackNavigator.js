@@ -8,7 +8,7 @@ const Stack = createStackNavigator();
 const StackNavigator = () => {
   return (
    <Stack.Navigator screenOptions={{headerShown:false}}>
-    {/* <Stack.Screen name='SplashScreen' component={SplashScreen} /> */}
+    <Stack.Screen name='SplashScreen' component={SplashScreen} />
     <Stack.Screen name='Home' component={HomeScreen} />
     <Stack.Screen name='Edit' component={EditScreen}    options={{
           gestureEnabled: false,  // Disable swipe-back gesture

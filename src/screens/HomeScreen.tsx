@@ -1,4 +1,4 @@
-import { Image, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import { Image, Pressable, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import ThemeButton from '../component/ui/ThemeButton'
 import ThemeText from '../component/ui/ThemeText'
@@ -21,7 +21,7 @@ const HomeScreen = ({ navigation }) => {
     return (
         <SafeAreaView style={styles.container}>
             <ThemeText style={styles.textStyle}>Trim Video</ThemeText>
-            <Pressable onPress={openVideoPicker} style={styles.imageSelect}>
+            <TouchableOpacity onPress={openVideoPicker} style={styles.imageSelect}>
                 <View style={styles.imageContainer}>
                     <Image style={styles.imageStyle} source={require('../asset/image-folder.png')} />
                     <ThemeText>Select videos</ThemeText>
@@ -30,7 +30,7 @@ const HomeScreen = ({ navigation }) => {
                 <View style={styles.selectButtonContainer}>
                     <ThemeButton onPress={openVideoPicker}>+ Select Videos</ThemeButton>
                 </View>
-            </Pressable>
+            </TouchableOpacity>
 
 
         </SafeAreaView>
@@ -50,7 +50,8 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     imageSelect: {
-
+        flex: 1,
+        justifyContent: 'flex-end',
     },
     imageContainer: {
         marginBottom: 150,
