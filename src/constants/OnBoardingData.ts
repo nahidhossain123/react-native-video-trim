@@ -16,7 +16,7 @@ export const OnBoardingData:OnboardingDataType[]=[
         text:'Welcome!',
         subText:`Let's do a quick tour of the app`,
         textColor:'#FFFFFF',
-        backgroundColor:'#FFA3CE',
+        backgroundColor:'#212121',
     },
     {
         id:2,
@@ -24,22 +24,22 @@ export const OnBoardingData:OnboardingDataType[]=[
         text:'Cut videos',
         subText:`Trim or cut videos to make them shorter.`,
         textColor:'#FFFFFF',
-        backgroundColor:'#BAE4FD',
+        backgroundColor:'#263238',
     },
     {
-        id:2,
+        id:3,
         animation:'',
         text:'Batch processing',
         subText:`Process one or multiple files at the same time.`,
         textColor:'#FFFFFF',
-        backgroundColor:'#FAEB8A',
+        backgroundColor:'#212121',
     },
     {
-        id:2,
+        id:4,
         animation:'',
         text:'All done!',
         subText:`You're ready to start using the app!`,
         textColor:'#FFFFFF',
-        backgroundColor:'#FFA3CE',
+        backgroundColor:'#263238',
     }
 ]

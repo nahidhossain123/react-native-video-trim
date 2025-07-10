@@ -2,6 +2,7 @@ import { StyleSheet, Text, useWindowDimensions, View } from 'react-native'
 import React from 'react'
 import Animated, { Extrapolate, interpolate, useAnimatedStyle } from 'react-native-reanimated'
 import ThemeButton from './ui/ThemeButton'
+import { OnBoardingData } from '../constants/OnBoardingData'
 
 const OnBoardingRenderItem = ({ item, index, x }) => {
     const { width: SCREEN_WIDTH } = useWindowDimensions()
@@ -35,10 +36,6 @@ const OnBoardingRenderItem = ({ item, index, x }) => {
                 <Text style={styles.text}>{item.text}</Text>
                 <Text style={styles.subtext}>{item.subText}</Text>
             </View>
-            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Text>Skip</Text>
-                <ThemeButton style={'border-radius:30'}>Continue</ThemeButton>
-            </View>
         </View>
     )
 }
@@ -59,5 +56,8 @@ const styles = StyleSheet.create({
     subtext: {
         color: '#FFFFFF',
         fontWeight: 'bold'
+    },
+    buttonStyle: {
+        borderRadius: 30
     }
 })
