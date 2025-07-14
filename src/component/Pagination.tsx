@@ -7,7 +7,9 @@ const Pagination = ({ x }) => {
     return (
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
             {(OnBoardingData.map((_, index) => (
-                <Dot index={index} x={x} />
+                <View key={index}>
+                    <Dot index={index} x={x} />
+                </View>
             )))}
         </View>
     )

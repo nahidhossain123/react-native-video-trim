@@ -1,7 +1,7 @@
 import { AnimationObject } from "react-native-reanimated";
 
 export interface OnboardingDataType{
-    id:number,
+    id:string,
     image:AnimationObject,
     text:string,
     subText:string,
@@ -11,7 +11,7 @@ export interface OnboardingDataType{
 
 export const OnBoardingData:OnboardingDataType[]=[
     {
-        id:1,
+        id:'1',
         animation:'',
         text:'Welcome!',
         subText:`Let's do a quick tour of the app`,
@@ -19,7 +19,7 @@ export const OnBoardingData:OnboardingDataType[]=[
         backgroundColor:'#212121',
     },
     {
-        id:2,
+        id:'2',
         animation:'',
         text:'Cut videos',
         subText:`Trim or cut videos to make them shorter.`,
@@ -27,7 +27,7 @@ export const OnBoardingData:OnboardingDataType[]=[
         backgroundColor:'#263238',
     },
     {
-        id:3,
+        id:'3',
         animation:'',
         text:'Batch processing',
         subText:`Process one or multiple files at the same time.`,
@@ -35,7 +35,7 @@ export const OnBoardingData:OnboardingDataType[]=[
         backgroundColor:'#212121',
     },
     {
-        id:4,
+        id:'4',
         animation:'',
         text:'All done!',
         subText:`You're ready to start using the app!`,

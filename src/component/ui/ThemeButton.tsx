@@ -1,10 +1,11 @@
-import { Button, Pressable, StyleSheet, Text, View } from 'react-native'
+import { Button, Image, Pressable, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-const ThemeButton = ({ onPress, children, style }) => {
+const ThemeButton = ({ onPress, children, style, icon }) => {
   return (
-    <Pressable onPress={onPress}>
-      <Text style={[styles.buttonStyle, style]}>{children}</Text>
+    <Pressable style={[styles.buttonStyle, style]} onPress={onPress}>
+      <Text>{children}</Text>
+      {icon && (<Image style={{ width: 20, height: 20 }} source={icon} />)}
     </Pressable>
   )
 }
