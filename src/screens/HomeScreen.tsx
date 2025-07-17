@@ -6,26 +6,28 @@ import { launchImageLibrary } from 'react-native-image-picker'
 import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withTiming, Easing, withSpring, useDerivedValue, interpolate, withSequence } from 'react-native-reanimated'
 import { getAsyncStorage, setAsyncStorage } from '../storage/values/AppStorage'
 import { HOME_SCREEN, SPLASH_SCREEN_KEYS } from '../storage/keys/AppKeys'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const HomeScreen = ({ navigation }) => {
     const [open, toggle] = useReducer(s => !s, false)
-    const [isFirstClickSelectButton, setIsFirstClickSelectButton] = useState(false)
+    const [hasClicked, setHasClicked] = useState(true)
     const { width: SCREEN_WIDTH } = useWindowDimensions()
 
     const progress = useDerivedValue(() => {
         return open ? withSpring(1) : withSpring(0)
     })
     const openVideoPicker = async () => {
-        await setAsyncStorage(HOME_SCREEN.HAS_SELECT_BUTTON_CLICKED, 'true')
-        const result = await launchImageLibrary({
-            mediaType: 'video',
-            videoQuality: 'low',
-            presentationStyle: 'formSheet',
-            assetRepresentationMode: 'current',
-        });
-        if (result.assets) {
-            navigation.navigate('Edit', { video: result.assets[0] })
-        }
+        console.log('HOmeScreen', HOME_SCREEN.HAS_SELECT_BUTTON_CLICKED)
+        await AsyncStorage.setItem(HOME_SCREEN.HAS_SELECT_BUTTON_CLICKED, 'true');
+        // const result = await launchImageLibrary({
+        //     mediaType: 'video',
+        //     videoQuality: 'low',
+        //     presentationStyle: 'formSheet',
+        //     assetRepresentationMode: 'current',
+        // });
+        // if (result.assets) {
+        //     navigation.navigate('Edit', { video: result.assets[0] })
+        // }
 
     };
 
@@ -89,33 +91,28 @@ const HomeScreen = ({ navigation }) => {
 
     const getData = async () => {
         try {
-            let value = await getAsyncStorage(SPLASH_SCREEN_KEYS.HAS_LAUNCHED)
-            console.log('StoredValue', value)
-            return value;
+            let hasLaunched = await getAsyncStorage(SPLASH_SCREEN_KEYS.HAS_LAUNCHED)
+            let hasClicked = await getAsyncStorage(HOME_SCREEN.HAS_SELECT_BUTTON_CLICKED)
+            return { hasLaunched, hasClicked };
         } catch (e) {
             // saving error
         }
     }
 
     useEffect(() => {
-        let hasLaunched
-        let hasClicked
-        const getData = async () => {
-            try {
-                hasLaunched = await getAsyncStorage(SPLASH_SCREEN_KEYS.HAS_LAUNCHED)
-                hasClicked = await getAsyncStorage(HOME_SCREEN.HAS_SELECT_BUTTON_CLICKED)
-            } catch (e) {
-                // saving error
+        (async () => {
+            let storageData = await getData()
+            console.log('storageData', storageData)
+            if (!storageData?.hasLaunched) {
+                storeData()
             }
-        }
-        getData()
-        console.log("Value", hasClicked)
-        if (!hasLaunched) {
-            storeData()
-        }
-        if (!hasClicked) {
-            toggle()
-        }
+            if (storageData?.hasClicked) {
+                setHasClicked(true)
+            } else {
+                setHasClicked(false)
+                toggle()
+            }
+        })()
     }, [])
 
     return (
@@ -129,35 +126,37 @@ const HomeScreen = ({ navigation }) => {
                 </View>
                 <View style={styles.selectButtonContainer}>
                     <ThemeButton style={{ zIndex: 1 }} onPress={openVideoPicker}>+ Select Videos</ThemeButton>
-                    <View style={{ position: 'absolute', top: -100, left: -200, zIndex: 10, width: SCREEN_WIDTH }}>
-                        <ThemeText style={{ fontWeight: 900, fontSize: 20 }}>Select videos</ThemeText>
-                        <ThemeText style={{}}>Click here to select one or more videos</ThemeText>
-                    </View>
-                    <View style={{ position: 'absolute', width: SCREEN_WIDTH, height: SCREEN_WIDTH, justifyContent: 'center', alignItems: 'center', }}>
-                        <Animated.View style={[{
-                            width: 10,
-                            height: 10,
-                            borderRadius: ((SCREEN_WIDTH * 3) / 2) / 2,
-                            backgroundColor: '#009688',
-                            position: 'absolute'
-                        }, animatedStyleCircle1]} />
-                        <Animated.View style={[{
-                            width: 150,
-                            height: 150,
-                            borderRadius: (SCREEN_WIDTH) / 2,
-                            backgroundColor: '#FFFFFF',
-                            position: 'absolute'
-                        },
-                            animatedStyle
-                        ]} />
-                        <Animated.View style={[{
-                            width: 170,
-                            height: 170,
-                            borderRadius: SCREEN_WIDTH / 2,
-                            backgroundColor: '#000000',
-                            position: 'absolute'
-                        }, animatedStyleCircle3]} />
-                    </View>
+                    {!hasClicked && (<>
+                        <View style={{ position: 'absolute', top: -100, left: -200, zIndex: 10, width: SCREEN_WIDTH }}>
+                            <ThemeText style={{ fontWeight: 900, fontSize: 20 }}>Select videos</ThemeText>
+                            <ThemeText style={{}}>Click here to select one or more videos</ThemeText>
+                        </View>
+                        <View style={{ position: 'absolute', width: SCREEN_WIDTH, height: SCREEN_WIDTH, justifyContent: 'center', alignItems: 'center', }}>
+                            <Animated.View style={[{
+                                width: 10,
+                                height: 10,
+                                borderRadius: ((SCREEN_WIDTH * 3) / 2) / 2,
+                                backgroundColor: '#03c5b2ff',
+                                position: 'absolute'
+                            }, animatedStyleCircle1]} />
+                            <Animated.View style={[{
+                                width: 150,
+                                height: 150,
+                                borderRadius: (SCREEN_WIDTH) / 2,
+                                backgroundColor: '#FFFFFF',
+                                position: 'absolute'
+                            },
+                                animatedStyle
+                            ]} />
+                            <Animated.View style={[{
+                                width: 170,
+                                height: 170,
+                                borderRadius: SCREEN_WIDTH / 2,
+                                backgroundColor: '#000000',
+                                position: 'absolute'
+                            }, animatedStyleCircle3]} />
+                        </View>
+                    </>)}
                 </View>
             </TouchableOpacity>
 

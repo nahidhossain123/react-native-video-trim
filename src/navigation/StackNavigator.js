@@ -16,6 +16,8 @@ const StackNavigator = () => {
       const hasLaunched = await AsyncStorage.getItem(SPLASH_SCREEN_KEYS.HAS_LAUNCHED);
       if(hasLaunched){
         setIsFirstLaunch(false)
+      }else{
+        setIsFirstLaunch(true)
       }
     };
 
