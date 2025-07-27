@@ -3,9 +3,27 @@ import React from 'react'
 import Animated, { Extrapolate, interpolate, useAnimatedStyle } from 'react-native-reanimated'
 import ThemeButton from './ui/ThemeButton'
 import { OnBoardingData } from '../constants/OnBoardingData'
+import LottieView from 'lottie-react-native';
 
 const OnBoardingRenderItem = ({ item, index, x }) => {
     const { width: SCREEN_WIDTH } = useWindowDimensions()
+    console.log('Animation', item)
+
+    const lottieAnimationStyle = useAnimatedStyle(() => {
+        const translateYAnimation = interpolate(
+            x.value,
+            [
+                (index - 1) * SCREEN_WIDTH,
+                (index) * SCREEN_WIDTH,
+                (index + 1) * SCREEN_WIDTH
+            ],
+            [200, 0, -200],
+            Extrapolate.CLAMP
+        )
+        return {
+            transform: [{ translateY: translateYAnimation }]
+        }
+    })
 
     const circleAnimation = useAnimatedStyle(() => {
         const scale = interpolate(
@@ -24,14 +42,21 @@ const OnBoardingRenderItem = ({ item, index, x }) => {
     })
     return (
         <View style={[styles.container, { width: SCREEN_WIDTH }]}>
-            <Animated.View style={[{
-                width: SCREEN_WIDTH,
-                height: SCREEN_WIDTH,
-                backgroundColor: item.backgroundColor,
-                borderRadius: SCREEN_WIDTH / 2
-            }, circleAnimation]}
+            <View style={{ position: 'absolute' }}>
+                <Animated.View style={[{
+                    width: SCREEN_WIDTH,
+                    height: SCREEN_WIDTH,
+                    backgroundColor: item.backgroundColor,
+                    borderRadius: SCREEN_WIDTH / 2
+                }, circleAnimation]}
 
-            />
+                />
+            </View>
+            <Animated.View style={lottieAnimationStyle}>
+                <View style={{ height: SCREEN_WIDTH * 0.9 }}>
+                    <LottieView style={{ width: '100%', height: '100%' }} source={item.animation} autoPlay loop />
+                </View>
+            </Animated.View>
             <View>
                 <Text style={styles.text}>{item.text}</Text>
                 <Text style={styles.subtext}>{item.subText}</Text>

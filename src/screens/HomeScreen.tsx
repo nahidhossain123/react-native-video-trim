@@ -17,18 +17,17 @@ const HomeScreen = ({ navigation }) => {
         return open ? withSpring(1) : withSpring(0)
     })
     const openVideoPicker = async () => {
-        console.log('HOmeScreen', HOME_SCREEN.HAS_SELECT_BUTTON_CLICKED)
+        setHasClicked(true)
         await AsyncStorage.setItem(HOME_SCREEN.HAS_SELECT_BUTTON_CLICKED, 'true');
-        // const result = await launchImageLibrary({
-        //     mediaType: 'video',
-        //     videoQuality: 'low',
-        //     presentationStyle: 'formSheet',
-        //     assetRepresentationMode: 'current',
-        // });
-        // if (result.assets) {
-        //     navigation.navigate('Edit', { video: result.assets[0] })
-        // }
-
+        const result = await launchImageLibrary({
+            mediaType: 'video',
+            videoQuality: 'low',
+            presentationStyle: 'formSheet',
+            assetRepresentationMode: 'current',
+        });
+        if (result.assets) {
+            navigation.navigate('Edit', { video: result.assets[0] })
+        }
     };
 
 

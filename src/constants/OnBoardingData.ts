@@ -2,7 +2,7 @@ import { AnimationObject } from "react-native-reanimated";
 
 export interface OnboardingDataType{
     id:string,
-    image:AnimationObject,
+    animation:object,
     text:string,
     subText:string,
     textColor:string,
@@ -12,7 +12,7 @@ export interface OnboardingDataType{
 export const OnBoardingData:OnboardingDataType[]=[
     {
         id:'1',
-        animation:'',
+        animation:require('../asset/lottie-animations/welcome.json'),
         text:'Welcome!',
         subText:`Let's do a quick tour of the app`,
         textColor:'#FFFFFF',
@@ -20,7 +20,7 @@ export const OnBoardingData:OnboardingDataType[]=[
     },
     {
         id:'2',
-        animation:'',
+        animation:require('../asset/lottie-animations/edit.json'),
         text:'Cut videos',
         subText:`Trim or cut videos to make them shorter.`,
         textColor:'#FFFFFF',
@@ -28,7 +28,7 @@ export const OnBoardingData:OnboardingDataType[]=[
     },
     {
         id:'3',
-        animation:'',
+        animation:require('../asset/lottie-animations/success.json'),
         text:'Batch processing',
         subText:`Process one or multiple files at the same time.`,
         textColor:'#FFFFFF',
@@ -36,7 +36,7 @@ export const OnBoardingData:OnboardingDataType[]=[
     },
     {
         id:'4',
-        animation:'',
+         animation:require('../asset/lottie-animations/success.json'),
         text:'All done!',
         subText:`You're ready to start using the app!`,
         textColor:'#FFFFFF',
