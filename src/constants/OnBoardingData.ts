@@ -27,14 +27,6 @@ export const OnBoardingData:OnboardingDataType[]=[
         backgroundColor:'#263238',
     },
     {
-        id:'3',
-        animation:require('../asset/lottie-animations/success.json'),
-        text:'Batch processing',
-        subText:`Process one or multiple files at the same time.`,
-        textColor:'#FFFFFF',
-        backgroundColor:'#212121',
-    },
-    {
         id:'4',
          animation:require('../asset/lottie-animations/success.json'),
         text:'All done!',

@@ -77,8 +77,6 @@ const VideoTrimmer = ({ video, navigation }) => {
     const [progress, setProgress] = useState(null);
     const seekableValue = useSharedValue(0)
 
-
-
     const getFrames = (
         localFileName,
         videoURI,
@@ -144,11 +142,6 @@ const VideoTrimmer = ({ video, navigation }) => {
                 );
                 errorCallback();
             }
-            // console.log(
-            //   `Async FFmpeg process started with sessionId ${JSON.stringify(
-            //     session,
-            //   )}.`,
-            // );
         });
     };
 
@@ -156,34 +149,13 @@ const VideoTrimmer = ({ video, navigation }) => {
         backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
     };
 
-    const openVideoPicker = async () => {
-        const result = await launchImageLibrary({
-            mediaType: 'video',
-            videoQuality: 'low',
-            presentationStyle: 'formSheet',
-            assetRepresentationMode: 'current',
-        });
-        console.log('ImageResult', result);
-        // position2.value =
-        //   result.assets[0].duration < 20 ? result.assets[0].duration * 20 : 200;
-        //   tempPosition2.value = result.assets[0].duration < 20 ? result.assets[0].duration * 20 : 200;
-        //sliderwidth.value =
-
-        //   result.assets[0].duration < 20 ? result.assets[0].duration * 20 : 200;
-        setSelectedVideo(result.assets[0]);
-    };
-
     const handleVideoLoad = () => {
-        //setIsPaused(true)
-        //videoRef?.current?.seek(11)
-        console.log('=====================', videoRef?.current)
         const numberOfFrames = Math.ceil((selectedVideo.duration) / 5);
         setFrames(
             Array(numberOfFrames).fill({
                 status: FRAME_STATUS.LOADING.name.description,
             }),
         );
-
         getFrames(
             selectedVideo.fileName.split('.')[0],
             selectedVideo.uri,
@@ -200,73 +172,28 @@ const VideoTrimmer = ({ video, navigation }) => {
         );
     };
 
-    console.log('FramesList', frames);
 
     const gestureHandler = useAnimatedGestureHandler({
         onStart: (_, ctx) => {
             ctx.startX = leftThumb.value;
-            console.log('StartValue', ctx.startX)
         },
         onActive: (e, ctx) => {
-
-            // if (
-            //   e.translationX >= 0 &&
-            //   e.translationX <= selectedVideo.duration * 20
-            // ) {
-            //   sliderwidth.value = position2.value - position.value;
-            //   position.value = ctx.startX + e.translationX;
-            // }
-            // leftThumb.value = ctx.startX + e.translationX;
-            // sliderwidth.value = rightThumb.value - leftThumb.value;
-            leftThumb.value = Math.max(0, Math.min(e.translationX + ctx.startX, 360));
+            leftThumb.value = Math.max(0, Math.min(e.translationX + ctx.startX, (SCREEN_WIDTH - 60 - 48) + (rightThumb.value - 1)));
             timelineThumb.value = 20
-            // console.log("SLiderVal", e.translationX, ctx)
-            // if (ctx.startX + e.translationX < 0) {
-            //     leftThumb.value = 0;
-            // } else if (ctx.startX + e.translationX > rightThumb.value) {
-            //     leftThumb.value = rightThumb.value;
-            //     sliderwidth.value = rightThumb.value - leftThumb.value;
-            // } else {
-            //     leftThumb.value = ctx.startX + e.translationX;
-            //     sliderwidth.value = rightThumb.value - leftThumb.value;
-            // }
-            console.log('leftThumb', ctx)
         },
         onEnd: () => {
             tempPosition.value = position.value;
-            // runOnJS(onValueChange)({
-            //   min:
-            //     min +
-            //     Math.floor(position.value / (sliderWidth / ((max - min) / step))) *
-            //       step,
-            //   max:
-            //     min +
-            //     Math.floor(position2.value / (sliderWidth / ((max - min) / step))) *
-            //       step,
-            // });
         },
     });
     const gestureTimelineHandler = useAnimatedGestureHandler({
         onStart: (_, ctx) => {
             ctx.startX = timelineThumb.value;
-            console.log('StartValue', ctx.startX)
         },
         onActive: (e, ctx) => {
-            timelineThumb.value = Math.max(20, Math.min(e.translationX + ctx.startX, 340));
-            console.log('leftThumb', ctx)
+            timelineThumb.value = Math.max(30, Math.min(e.translationX + ctx.startX, 340));
         },
         onEnd: () => {
             tempPosition.value = position.value;
-            // runOnJS(onValueChange)({
-            //   min:
-            //     min +
-            //     Math.floor(position.value / (sliderWidth / ((max - min) / step))) *
-            //       step,
-            //   max:
-            //     min +
-            //     Math.floor(position2.value / (sliderWidth / ((max - min) / step))) *
-            //       step,
-            // });
         },
     });
     const gestureHandler2 = useAnimatedGestureHandler({
@@ -274,42 +201,10 @@ const VideoTrimmer = ({ video, navigation }) => {
             ctx.startX = rightThumb.value;
         },
         onActive: (e, ctx) => {
-            console.log('e.translationX', e.translationX)
-            // if (
-            //   e.translationX >= 0 &&
-            //   e.translationX <= selectedVideo.duration * 20
-            // ) {
-            //   sliderwidth.value = position2.value - position.value;
-            //   position2.value = ctx.startX + e.translationX;
-            // }
-            // rightThumb.value = ctx.startX + e.translationX;
-            //   sliderwidth.value = rightThumb.value - leftThumb.value;
-            rightThumb.value = Math.min(0, e.translationX + ctx.startX);
-            // if (ctx.startX + e.translationX > selectedVideo.duration * 20) {
-            //     rightThumb.value = selectedVideo.duration * 20;
-
-            // } else if (ctx.startX + e.translationX < leftThumb.value) {
-            //     rightThumb.value = leftThumb.value;
-            //     sliderwidth.value = rightThumb.value - leftThumb.value;
-
-            // } else {
-            //     rightThumb.value = ctx.startX + e.translationX;
-            //     sliderwidth.value = rightThumb.value - leftThumb.value;
-
-            // }
+            rightThumb.value = Math.min(0, Math.max(e.translationX + ctx.startX, -((SCREEN_WIDTH - 60 - 48) - (leftThumb.value + 1))))
         },
         onEnd: () => {
             tempPosition2.value = position2.value
-            // runOnJS(onValueChange)({
-            //   min:
-            //     min +
-            //     Math.floor(position.value / (sliderWidth / ((max - min) / step))) *
-            //       step,
-            //   max:
-            //     min +
-            //     Math.floor(position2.value / (sliderWidth / ((max - min) / step))) *
-            //       step,
-            // });
         },
     });
 
@@ -353,23 +248,14 @@ const VideoTrimmer = ({ video, navigation }) => {
         onScroll: event => {
             position.value = event.contentOffset.x;
             position2.value = event.contentOffset.x;
-
             runOnJS(seekVal)(position.value)
-            // tempPosition.value = position.value-event.contentOffset.x;
-            // tempPosition2.value = position2.value-event.contentOffset.x;
-            //setHandlePosition({pos1:leftPos,pos2:rightPos})
-            //runOnJS(setHandlePosition)({pos1:leftPos,pos2:rightPos});
-            console.log('Onscroll', event.contentOffset.x);
         },
     });
     Animated.addWhitelistedNativeProps({ text: true });
     const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
     const minLabelText = useAnimatedProps(() => {
-        // return {
-        //   text: `00.${Math.floor(leftThumb.value +position.value)}`,
-        // };
-        runOnJS(seekVal)(position.value + leftThumb.value)
-        let time = 0 + Math.floor((position.value + leftThumb.value) / ((SCREEN_WIDTH) / ((20 - 0) / 1))) * 1
+        let time = Math.floor((leftThumb.value / (SCREEN_WIDTH - 60 - 48)) * selectedVideo.duration)
+        runOnJS(seekVal)(time)
         let h = 0;
         let m = 0;
         let s = 0;
@@ -382,11 +268,24 @@ const VideoTrimmer = ({ video, navigation }) => {
 
     });
     const maxLabelText = useAnimatedProps(() => {
-        // return {
-        //   text: `00.${Math.floor(rightThumb.value / 20)}`,
-        // };
-        runOnJS(seekVal)(position.value + rightThumb.value)
-        let time = 0 + Math.floor((position2.value + rightThumb.value) / ((SCREEN_WIDTH) / ((20 - 0) / 1))) * 1
+        let time = Math.floor((((SCREEN_WIDTH - 60 - 48) + rightThumb.value) / (SCREEN_WIDTH - 60 - 48)) * selectedVideo.duration)
+        runOnJS(seekVal)(time)
+        console.log('SeeekVal', time)
+        let h = 0;
+        let m = 0;
+        let s = 0;
+        h = Math.floor(time / 3600);
+        m = Math.floor(time % 3600 / 60);
+        s = Math.floor(time % 3600 % 60);
+
+        return {
+            text: `${h}:${m}:${s}`,
+        };
+    });
+    const middleThumb = useAnimatedProps(() => {
+        let time = Math.floor((timelineThumb.value / (SCREEN_WIDTH - 60 - 48)) * selectedVideo.duration)
+        runOnJS(seekVal)(time)
+        console.log('SeeekVal', time)
         let h = 0;
         let m = 0;
         let s = 0;
@@ -400,7 +299,6 @@ const VideoTrimmer = ({ video, navigation }) => {
     });
 
     const getTrimTime = (val) => {
-        console.log("Secornds", val)
         let time = 0 + Math.floor((val) / ((SCREEN_WIDTH) / ((20 - 0) / 1))) * 1
         let h = 0;
         let m = 0;
@@ -439,18 +337,23 @@ const VideoTrimmer = ({ video, navigation }) => {
 
     const findDimention = (event) => {
         const { x, y, width, height } = event.nativeEvent.layout;
-        console.log('=======Width======', width)
     }
+
+
+    const handleTouch = (e: GestureResponderEvent) => {
+        const { locationX, locationY, pageX, pageY } = e.nativeEvent;
+        timelineThumb.value = locationX
+    };
+
+
     return (
-        <GestureHandlerRootView style={{ flex: 1, borderColor: 'red', borderWidth: 2 }}>
+        <GestureHandlerRootView style={{ flex: 1 }}>
             <SafeAreaView style={[backgroundStyle, styles.container]}>
                 {selectedVideo?.uri && (<Video
                     ref={videoRef}
                     onProgress={x => {
                         let duration = x.currentTime * 20
-
                         let time = (0 + Math.floor(duration / ((SCREEN_WIDTH) / ((20 - 0) / 1))) * 1)
-
                         seekableValue.value = time
                     }}
                     paused={isPaused}
@@ -462,7 +365,7 @@ const VideoTrimmer = ({ video, navigation }) => {
                     resizeMode={'cover'}
                     repeat={true}
                     onLoad={handleVideoLoad}
-                    style={{ width: '100%', height: 300, borderRadius: 20, }}
+                    style={{ width: '100%', flex: 1, borderRadius: 20, }}
                 />)}
                 <View>
 
@@ -493,7 +396,7 @@ const VideoTrimmer = ({ video, navigation }) => {
                     </Animated.View>
                     <View style={{ marginBottom: 30 }} onLayout={findDimention}>
                         {selectedVideo && (
-                            <View style={{ width: '100%', height: 50, position: 'relative' }}>
+                            <View style={{ width: '100%', height: 80, position: 'relative' }}>
                                 <Animated.ScrollView
                                     showsHorizontalScrollIndicator={false}
                                     horizontal={true}
@@ -501,7 +404,7 @@ const VideoTrimmer = ({ video, navigation }) => {
                                     alwaysBounceHorizontal={true}
                                     scrollEventThrottle={1}
                                     onScroll={scrollHandler}
-                                    style={{ marginLeft: 20, marginRight: 20 }}
+                                    style={{ marginLeft: 30, marginRight: 30 }}
                                 >
 
                                     {frames?.map((item, index) => {
@@ -512,8 +415,8 @@ const VideoTrimmer = ({ video, navigation }) => {
                                                     uri: 'file://' + item,
                                                 }}
                                                 style={{
-                                                    width: SCREEN_WIDTH / 4,
-                                                    height: 50,
+                                                    width: SCREEN_WIDTH / 5,
+                                                    height: 80,
                                                 }}
                                             />
                                         );
@@ -527,8 +430,8 @@ const VideoTrimmer = ({ video, navigation }) => {
                                         <Animated.View
                                             style={[
                                                 {
-                                                    width: 20,
-                                                    height: 50,
+                                                    width: 30,
+                                                    height: 80,
                                                     backgroundColor: '#FFF',
                                                     borderBottomLeftRadius: 5,
                                                     borderTopLeftRadius: 5,
@@ -541,16 +444,17 @@ const VideoTrimmer = ({ video, navigation }) => {
                                             <View style={{ width: 3, height: 20, backgroundColor: '#000', borderRadius: 10 }} />
                                         </Animated.View>
                                     </PanGestureHandler>
-                                    <View style={{ position: 'absolute', height: '100%', left: 15, right: 15, borderColor: '#FFF', borderWidth: 4 }}>
+                                    <View onTouchStart={handleTouch} style={{ position: 'absolute', height: '100%', left: 15, right: 15, borderColor: '#FFF', borderWidth: 4 }}>
 
                                     </View>
                                     <PanGestureHandler onGestureEvent={gestureTimelineHandler}>
                                         <Animated.View
+
                                             style={[
                                                 animatedTimelineThumbStyle,
                                                 {
-                                                    backgroundColor: 'red',
-                                                    width: 5,
+
+                                                    width: 20,
                                                     height: '100%',
                                                     position: 'absolute',
                                                     borderRadius: 1,
@@ -558,7 +462,19 @@ const VideoTrimmer = ({ video, navigation }) => {
                                                     left: 20,
                                                     zIndex: 99
                                                 },
-                                            ]}></Animated.View>
+                                            ]}
+                                        >
+                                            <View
+                                                style={[
+
+                                                    {
+                                                        backgroundColor: '#FFF',
+                                                        width: 2,
+                                                        height: '100%',
+                                                        borderRadius: 1,
+                                                    },
+                                                ]}></View>
+                                        </Animated.View>
                                     </PanGestureHandler>
                                     <PanGestureHandler onGestureEvent={gestureHandler2}>
                                         <Animated.View
@@ -566,8 +482,8 @@ const VideoTrimmer = ({ video, navigation }) => {
 
                                                 {
                                                     position: 'absolute',
-                                                    width: 20,
-                                                    height: 50,
+                                                    width: 30,
+                                                    height: 80,
                                                     backgroundColor: '#FFF',
                                                     borderTopRightRadius: 5,
                                                     borderBottomRightRadius: 5,
