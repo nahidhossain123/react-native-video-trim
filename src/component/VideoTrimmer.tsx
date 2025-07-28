@@ -2,6 +2,7 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { PropsWithChildren } from 'react';
 import {
     Dimensions,
+    GestureResponderEvent,
     Image,
     Pressable,
     SafeAreaView,
@@ -35,6 +36,8 @@ import Animated, {
     useSharedValue,
     withDecay,
     withTiming,
+    ReanimatedText,
+    useDerivedValue
 } from 'react-native-reanimated';
 import {
     Gesture,
@@ -59,7 +62,6 @@ const VideoTrimmer = ({ video, navigation }) => {
     console.log('Route', video)
     const isDarkMode = useColorScheme() === 'dark';
     const [selectedVideo, setSelectedVideo] = useState(video.video);
-    const [handlePosition, setHandlePosition] = useState(0)
     const [isPaused, setIsPaused] = useState(false);
     const [frames, setFrames] = useState([]);
     const position = useSharedValue(0);
@@ -70,11 +72,8 @@ const VideoTrimmer = ({ video, navigation }) => {
     const [outputVideoPath, setOutputVideoPath] = useState('');
     const leftThumb = useSharedValue(0);
     const timelineThumb = useSharedValue(0);
-    const trimStart = useSharedValue(0);
-    const trimEnd = useSharedValue(0)
     const rightThumb = useSharedValue(0)
     const videoRef = useRef()
-    const [progress, setProgress] = useState(null);
     const seekableValue = useSharedValue(0)
 
     const getFrames = (
@@ -239,9 +238,7 @@ const VideoTrimmer = ({ video, navigation }) => {
 
     const seekVal = (time) => {
         setIsPaused(true)
-        let t = 0 + Math.floor(time / ((SCREEN_WIDTH) / ((20 - 0) / 1))) * 1
-        console.log('Time', t)
-        videoRef?.current?.seek(t)
+        videoRef?.current?.seek(time)
     }
 
     const scrollHandler = useAnimatedScrollHandler({
@@ -251,7 +248,9 @@ const VideoTrimmer = ({ video, navigation }) => {
             runOnJS(seekVal)(position.value)
         },
     });
+
     Animated.addWhitelistedNativeProps({ text: true });
+
     const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
     const minLabelText = useAnimatedProps(() => {
         let time = Math.floor((leftThumb.value / (SCREEN_WIDTH - 60 - 48)) * selectedVideo.duration)
@@ -269,30 +268,15 @@ const VideoTrimmer = ({ video, navigation }) => {
     });
     const maxLabelText = useAnimatedProps(() => {
         let time = Math.floor((((SCREEN_WIDTH - 60 - 48) + rightThumb.value) / (SCREEN_WIDTH - 60 - 48)) * selectedVideo.duration)
+
         runOnJS(seekVal)(time)
-        console.log('SeeekVal', time)
         let h = 0;
         let m = 0;
         let s = 0;
         h = Math.floor(time / 3600);
         m = Math.floor(time % 3600 / 60);
         s = Math.floor(time % 3600 % 60);
-
-        return {
-            text: `${h}:${m}:${s}`,
-        };
-    });
-    const middleThumb = useAnimatedProps(() => {
-        let time = Math.floor((timelineThumb.value / (SCREEN_WIDTH - 60 - 48)) * selectedVideo.duration)
-        runOnJS(seekVal)(time)
-        console.log('SeeekVal', time)
-        let h = 0;
-        let m = 0;
-        let s = 0;
-        h = Math.floor(time / 3600);
-        m = Math.floor(time % 3600 / 60);
-        s = Math.floor(time % 3600 % 60);
-
+        console.log('maxLabelText', time, h, m, s)
         return {
             text: `${h}:${m}:${s}`,
         };
@@ -341,10 +325,9 @@ const VideoTrimmer = ({ video, navigation }) => {
 
 
     const handleTouch = (e: GestureResponderEvent) => {
-        const { locationX, locationY, pageX, pageY } = e.nativeEvent;
+        const { locationX } = e.nativeEvent;
         timelineThumb.value = locationX
     };
-
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
@@ -368,7 +351,6 @@ const VideoTrimmer = ({ video, navigation }) => {
                     style={{ width: '100%', flex: 1, borderRadius: 20, }}
                 />)}
                 <View>
-
                     <Animated.View
                         style={{
                             justifyContent: 'space-between',
@@ -385,13 +367,13 @@ const VideoTrimmer = ({ video, navigation }) => {
                             style={{ color: '#FFFFFF' }}
                             animatedProps={minLabelText}
                             editable={false}
-                            defaultValue={'00.00.00'}
+                            defaultValue={`${Math.floor((selectedVideo.duration / 3600))}:${Math.floor(selectedVideo.duration % 3600 / 60)}:${Math.floor(selectedVideo.duration % 3600 % 60)}`}
                         />
                         <AnimatedTextInput
                             style={{ color: '#FFFFFF' }}
                             animatedProps={maxLabelText}
                             editable={false}
-                            defaultValue={'00.00.00'}
+                            defaultValue={`${Math.floor((selectedVideo.duration / 3600))}:${Math.floor(selectedVideo.duration % 3600 / 60)}:${Math.floor(selectedVideo.duration % 3600 % 60)}`}
                         />
                     </Animated.View>
                     <View style={{ marginBottom: 30 }} onLayout={findDimention}>
@@ -404,7 +386,7 @@ const VideoTrimmer = ({ video, navigation }) => {
                                     alwaysBounceHorizontal={true}
                                     scrollEventThrottle={1}
                                     onScroll={scrollHandler}
-                                    style={{ marginLeft: 30, marginRight: 30 }}
+                                    style={{ marginLeft: 30, marginRight: 30, }}
                                 >
 
                                     {frames?.map((item, index) => {
@@ -460,7 +442,9 @@ const VideoTrimmer = ({ video, navigation }) => {
                                                     borderRadius: 1,
                                                     top: 0,
                                                     left: 20,
-                                                    zIndex: 99
+                                                    zIndex: 99,
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center'
                                                 },
                                             ]}
                                         >
