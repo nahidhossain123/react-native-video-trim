@@ -7,6 +7,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withTiming, Eas
 import { getAsyncStorage, setAsyncStorage } from '../storage/values/AppStorage'
 import { HOME_SCREEN, SPLASH_SCREEN_KEYS } from '../storage/keys/AppKeys'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { cleanupAllOldFrames } from '../utils/functions'
 
 const HomeScreen = ({ navigation }) => {
     const [open, toggle] = useReducer(s => !s, false)
@@ -17,6 +18,7 @@ const HomeScreen = ({ navigation }) => {
         return open ? withSpring(1) : withSpring(0)
     })
     const openVideoPicker = async () => {
+        cleanupAllOldFrames()
         setHasClicked(true)
         await AsyncStorage.setItem(HOME_SCREEN.HAS_SELECT_BUTTON_CLICKED, 'true');
         const result = await launchImageLibrary({
@@ -26,7 +28,7 @@ const HomeScreen = ({ navigation }) => {
             assetRepresentationMode: 'current',
         });
         if (result.assets) {
-            navigation.navigate('Edit', { video: result.assets[0] })
+            navigation.navigate('Video', { video: result.assets[0] })
         }
     };
 

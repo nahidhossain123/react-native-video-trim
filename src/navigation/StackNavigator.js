@@ -5,6 +5,10 @@ import SplashScreen from '../screens/SplashScreen';
 import { useEffect, useState } from 'react';
 import { SPLASH_SCREEN_KEYS } from '../storage/keys/AppKeys';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import VideoEditorScreen from '../screens/VideoEditorScreen';
+import TestScreen1 from '../screens/VideoScreen';
+import DetailsScreen from '../screens/DetailsScreen';
+import VideoScreen from '../screens/VideoScreen';
 
 const Stack = createStackNavigator();
 
@@ -32,8 +36,11 @@ const StackNavigator = () => {
    <Stack.Navigator screenOptions={{headerShown:false}}>
     {isFirstLaunch &&(<Stack.Screen name='SplashScreen' component={SplashScreen} />)}
     <Stack.Screen name='Home' component={HomeScreen} />
+     <Stack.Screen name='VideoEditor' component={VideoEditorScreen} />
+     <Stack.Screen name='Video' component={VideoScreen} />
+     <Stack.Screen name='DetailsScreen' component={DetailsScreen} sharedElements={() => ['video']} />
     <Stack.Screen name='Edit' component={EditScreen}    options={{
-          gestureEnabled: false,  // Disable swipe-back gesture
+          gestureEnabled: false,  
         }} />
    </Stack.Navigator>
   )
