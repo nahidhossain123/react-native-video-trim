@@ -1,7 +1,7 @@
-import { Button, Image, Pressable, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import { Image, ImageSourcePropType, Pressable, StyleSheet, Text, TextStyle, View, ViewStyle } from 'react-native'
+import React, { ReactNode } from 'react'
 
-const ThemeButton = ({ onPress, children, style, typoStyle, icon }) => {
+const ThemeButton = ({ onPress, children, style, typoStyle, icon }: { onPress: () => void, children: ReactNode, style?: ViewStyle, typoStyle?: TextStyle, icon?: ImageSourcePropType }) => {
   return (
     <Pressable style={[styles.buttonStyle, style]} onPress={onPress}>
       <Text style={[{ textAlign: 'center' }, typoStyle]}>{children}</Text>

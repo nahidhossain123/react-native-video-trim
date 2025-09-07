@@ -2,7 +2,7 @@ import { AnimationObject } from "react-native-reanimated";
 
 export interface OnboardingDataType{
     id:string,
-    animation:object,
+    animation:string,
     text:string,
     subText:string,
     textColor:string,

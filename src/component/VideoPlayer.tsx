@@ -16,7 +16,7 @@ const VideoPlayer = forwardRef(({ selectedVideo, onVideoLoad, dragY, }, ref) => 
         onSeek,
     }));
 
-    const onSeek = (time) => {
+    const onSeek = (time: number) => {
         setIsPaused(true)
         videoRef?.current?.seek(time)
     }
@@ -84,41 +84,41 @@ const VideoPlayer = forwardRef(({ selectedVideo, onVideoLoad, dragY, }, ref) => 
                     style={{ width: '100%', height: '100%', flex: 1, borderRadius: 20, }}
                 />)}
             </GestureDetector>
-            <Animated.View style={[{ position: 'absolute', right: 5, top: 50, alignItems: 'flex-end', gap: 25 }, buttonStyle]}>
-                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 5 }}>
-                    <Text onPress={toggleVideoSize} style={{ color: '#FFFFFF' }}>Edit</Text>
+            <Animated.View style={[{ position: 'absolute', right: 10, top: 50, alignItems: 'flex-end', gap: 25 }, buttonStyle]}>
+                <View style={styles.btnContainer}>
+                    <Text onPress={toggleVideoSize} style={styles.textBtnStyle}>Edit</Text>
                     <Image style={{ width: 25, height: 25 }} source={require('../asset/icons/trim.png')} />
                 </View>
-                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 5 }}>
-                    <Text style={{ color: '#FFFFFF' }}>Template</Text>
+                <View style={styles.btnContainer}>
+                    <Text style={styles.textBtnStyle}>Template</Text>
                     <Image style={{ width: 25, height: 25 }} source={require('../asset/icons/youtube.png')} />
                 </View>
-                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 5 }}>
-                    <Text style={{ color: '#FFFFFF' }}>Text</Text>
+                <View style={styles.btnContainer}>
+                    <Text style={styles.textBtnStyle}>Text</Text>
                     <Image style={{ width: 25, height: 25 }} source={require('../asset/icons/font.png')} />
                 </View>
-                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 5 }}>
-                    <Text style={{ color: '#FFFFFF' }}>Stickers</Text>
+                <View style={styles.btnContainer}>
+                    <Text style={styles.textBtnStyle}>Stickers</Text>
                     <Image style={{ width: 25, height: 25 }} source={require('../asset/icons/sticker.png')} />
                 </View>
-                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 5 }}>
-                    <Text style={{ color: '#FFFFFF' }}>Effects</Text>
+                <View style={styles.btnContainer}>
+                    <Text style={styles.textBtnStyle}>Effects</Text>
                     <Image style={{ width: 25, height: 25 }} source={require('../asset/icons/effects.png')} />
                 </View>
-                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 5 }}>
-                    <Text style={{ color: '#FFFFFF' }}>Filters</Text>
+                <View style={styles.btnContainer}>
+                    <Text style={styles.textBtnStyle}>Filters</Text>
                     <Image style={{ width: 25, height: 25 }} source={require('../asset/icons/filters.png')} />
                 </View>
-                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 5 }}>
-                    <Text style={{ color: '#FFFFFF' }}>Voice</Text>
+                <View style={styles.btnContainer}>
+                    <Text style={styles.textBtnStyle}>Voice</Text>
                     <Image style={{ width: 25, height: 25 }} source={require('../asset/icons/voice-search.png')} />
                 </View>
-                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 5 }}>
-                    <Text style={{ color: '#FFFFFF' }}>Captions</Text>
+                <View style={styles.btnContainer}>
+                    <Text style={styles.textBtnStyle}>Captions</Text>
                     <Image style={{ width: 25, height: 25 }} source={require('../asset/icons/caption.png')} />
                 </View>
-                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 5 }}>
-                    <Text style={{ color: '#FFFFFF' }}>Save</Text>
+                <View style={styles.btnContainer}>
+                    <Text style={styles.textBtnStyle}>Save</Text>
                     <Image style={{ width: 25, height: 25 }} source={require('../asset/icons/download.png')} />
                 </View>
             </Animated.View>
@@ -133,5 +133,7 @@ const styles = StyleSheet.create({
     videoContainer: {
         backgroundColor: '#000',
     },
+    btnContainer: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 5 },
+    textBtnStyle: { color: '#FFFFFF', fontWeight: 'bold' }
 
 });

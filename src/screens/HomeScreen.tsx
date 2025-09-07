@@ -8,8 +8,12 @@ import { getAsyncStorage, setAsyncStorage } from '../storage/values/AppStorage'
 import { HOME_SCREEN, SPLASH_SCREEN_KEYS } from '../storage/keys/AppKeys'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { cleanupAllOldFrames } from '../utils/functions'
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { RootStackParamList } from '../navigation/type'
 
-const HomeScreen = ({ navigation }) => {
+type propsType = NativeStackScreenProps<RootStackParamList, "Home">
+
+const HomeScreen = ({ navigation }: propsType) => {
     const [open, toggle] = useReducer(s => !s, false)
     const [hasClicked, setHasClicked] = useState(true)
     const { width: SCREEN_WIDTH } = useWindowDimensions()
@@ -129,7 +133,7 @@ const HomeScreen = ({ navigation }) => {
                     <ThemeButton style={{ zIndex: 1 }} onPress={openVideoPicker}>+ Select Videos</ThemeButton>
                     {!hasClicked && (<>
                         <View style={{ position: 'absolute', top: -100, left: -200, zIndex: 10, width: SCREEN_WIDTH }}>
-                            <ThemeText style={{ fontWeight: 900, fontSize: 20 }}>Select videos</ThemeText>
+                            <ThemeText style={{ fontWeight: '900', fontSize: 20 }}>Select videos</ThemeText>
                             <ThemeText style={{}}>Click here to select one or more videos</ThemeText>
                         </View>
                         <View style={{ position: 'absolute', width: SCREEN_WIDTH, height: SCREEN_WIDTH, justifyContent: 'center', alignItems: 'center', }}>

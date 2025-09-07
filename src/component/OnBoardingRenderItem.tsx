@@ -1,11 +1,10 @@
 import { StyleSheet, Text, useWindowDimensions, View } from 'react-native'
 import React from 'react'
-import Animated, { Extrapolate, interpolate, useAnimatedStyle } from 'react-native-reanimated'
-import ThemeButton from './ui/ThemeButton'
-import { OnBoardingData } from '../constants/OnBoardingData'
+import Animated, { Extrapolate, interpolate, SharedValue, useAnimatedStyle } from 'react-native-reanimated'
 import LottieView from 'lottie-react-native';
+import { OnboardingDataType } from '../constants/OnBoardingData';
 
-const OnBoardingRenderItem = ({ item, index, x }) => {
+const OnBoardingRenderItem = ({ item, index, x }: { item: OnboardingDataType, index: number, x: SharedValue<number> }) => {
     const { width: SCREEN_WIDTH } = useWindowDimensions()
     console.log('Animation', item)
 
