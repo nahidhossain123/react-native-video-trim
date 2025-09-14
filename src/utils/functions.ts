@@ -43,3 +43,8 @@ export const getSecToTime = (time:number)=>{
     return `${h}:${m}:${s}`
 }
 
+export const byteToMB = (size:number)=>{
+    return (Number(size) / (1024 * 1024)).toFixed(2);
+
+}
+

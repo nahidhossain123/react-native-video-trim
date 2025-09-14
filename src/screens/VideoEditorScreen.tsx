@@ -15,7 +15,7 @@ import RNFS, { stat } from 'react-native-fs';
 import { GestureDetector, Gesture, GestureHandlerRootView, PanGestureHandler, PanGestureHandlerGestureEvent } from 'react-native-gesture-handler';
 import ThemeButton from '../component/ui/ThemeButton';
 import { FFmpegKit, FFmpegKitConfig, ReturnCode } from 'ffmpeg-kit-react-native';
-import { cleanupAllOldFrames, extractFrame, getSecToTime, sectionToTime } from '../utils/functions';
+import { byteToMB, cleanupAllOldFrames, extractFrame, getSecToTime } from '../utils/functions';
 import VideoPlayer, { ChildFunctionsRefType } from '../component/VideoPlayer';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/type';
@@ -434,7 +434,8 @@ export default function VideoEditorScreen({ navigation, route }: propsType) {
               let startTime = getSecToTime(start)
               let endTime = getSecToTime(end)
               let total = (end - start) * 1000
-              navigation.navigate('Process', { processProps: { startTime, endTime, url: selectedVideo.uri || '', duration: total, startTimeS: start * 1000, thumbnail: frames[0] } })
+              let prevSize = byteToMB(selectedVideo.fileSize || 0)
+              navigation.replace('Process', { processProps: { startTime, endTime, url: selectedVideo.uri || '', duration: total, startTimeS: start * 1000, thumbnail: frames[0], prevSize } })
             }}>Save</Text>
           </View>
         </Animated.View>
