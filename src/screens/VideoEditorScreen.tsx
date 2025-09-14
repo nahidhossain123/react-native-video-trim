@@ -11,13 +11,18 @@ import Animated, {
   useAnimatedScrollHandler,
   useAnimatedGestureHandler,
 } from 'react-native-reanimated';
-import { GestureDetector, Gesture, GestureHandlerRootView, PanGestureHandler } from 'react-native-gesture-handler';
+import RNFS, { stat } from 'react-native-fs';
+import { GestureDetector, Gesture, GestureHandlerRootView, PanGestureHandler, PanGestureHandlerGestureEvent } from 'react-native-gesture-handler';
 import ThemeButton from '../component/ui/ThemeButton';
 import { FFmpegKit, FFmpegKitConfig, ReturnCode } from 'ffmpeg-kit-react-native';
-import { cleanupAllOldFrames, extractFrame } from '../utils/functions';
-import VideoPlayer from '../component/VideoPlayer';
+import { cleanupAllOldFrames, extractFrame, getSecToTime, sectionToTime } from '../utils/functions';
+import VideoPlayer, { ChildFunctionsRefType } from '../component/VideoPlayer';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/type';
+
+type ContextType = {
+  startX: number;
+};
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 const FRAME_COUNT = 5;
@@ -29,10 +34,6 @@ export default function VideoEditorScreen({ navigation, route }: propsType) {
   const snapHeight = SCREEN_HEIGHT / 1.5;
   const dragY = useSharedValue(0);
   const offsetY = useSharedValue(0); // persist position after each drag
-
-
-
-
   const panelStyle = useAnimatedStyle(() => {
     const opacity = interpolate(dragY.value, [0, -snapHeight], [0, 1]);
     return { opacity };
@@ -46,7 +47,7 @@ export default function VideoEditorScreen({ navigation, route }: propsType) {
 
   const [selectedVideo, setSelectedVideo] = useState(route.params.video);
   const [isPaused, setIsPaused] = useState(false);
-  const [frames, setFrames] = useState([]);
+  const [frames, setFrames] = useState<string[]>([]);
   const position = useSharedValue(0);
   const position2 = useSharedValue(0);
   const tempPosition = useSharedValue(0);
@@ -57,11 +58,12 @@ export default function VideoEditorScreen({ navigation, route }: propsType) {
   const timelineThumb = useSharedValue(0);
   const rightThumb = useSharedValue(0)
   const videoRef = useRef()
-  const videoPlayerRef = useRef()
+  const videoPlayerRef = useRef<ChildFunctionsRefType>(null)
   const seekableValue = useSharedValue(0)
   const [isEdit, setIsEdit] = useState(false)
 
-
+  const leftTrimValueRef = useRef('0:0:0')
+  const rightTrimValueRef = useRef(`${Math.floor(((route.params.video.duration || 0) / 3600))}:${Math.floor((route.params.video?.duration || 0) % 3600 / 60)}:${Math.floor((route.params.video.duration || 0) % 3600 % 60)}`)
 
   useEffect(() => {
     return () => {
@@ -74,26 +76,29 @@ export default function VideoEditorScreen({ navigation, route }: propsType) {
 
     console.log('ONLoddfdf=================')
 
-    const timestamps = [0.1, 0.3, 0.5, 0.7, 0.9].map(p => p * selectedVideo.duration);
+    const timestamps = [0.1, 0.3, 0.5, 0.7, 0.9].map(p => p * (selectedVideo.duration || 0));
 
-    // Load middle frame first
-    extractFrame(selectedVideo.uri, timestamps[2], 2).then(uri => {
-      setFrames(Array(FRAME_COUNT).fill(uri)); // fill all with middle frame
+    if (selectedVideo.uri) {
+      let videoUri = selectedVideo.uri
+      // Load middle frame first
+      extractFrame(videoUri, timestamps[2], 2).then(uri => {
+        setFrames(Array(FRAME_COUNT).fill(uri)); // fill all with middle frame
 
-      // Load other frames progressively
-      [0, 1, 3, 4].forEach(index => {
-        extractFrame(selectedVideo.uri, timestamps[index], index).then(newUri => {
-          setFrames(prev => {
-            const copy = [...prev];
-            copy[index] = newUri;
-            return copy;
+        // Load other frames progressively
+        [0, 1, 3, 4].forEach(index => {
+          extractFrame(videoUri, timestamps[index], index).then(newUri => {
+            setFrames(prev => {
+              const copy = [...prev];
+              copy[index] = newUri;
+              return copy;
+            });
           });
         });
       });
-    });
+    }
   };
 
-  const seekVal = (time) => {
+  const seekVal = (time: number) => {
     if (videoPlayerRef?.current) {
       videoPlayerRef?.current?.onSeek(time)
     }
@@ -101,7 +106,7 @@ export default function VideoEditorScreen({ navigation, route }: propsType) {
 
 
 
-  const gestureHandler = useAnimatedGestureHandler({
+  const gestureHandler = useAnimatedGestureHandler<PanGestureHandlerGestureEvent, ContextType>({
     onStart: (_, ctx) => {
       ctx.startX = leftThumb.value;
     },
@@ -113,13 +118,13 @@ export default function VideoEditorScreen({ navigation, route }: propsType) {
       tempPosition.value = position.value;
     },
   });
-  const gestureTimelineHandler = useAnimatedGestureHandler({
+  const gestureTimelineHandler = useAnimatedGestureHandler<PanGestureHandlerGestureEvent, ContextType>({
     onStart: (_, ctx) => {
       ctx.startX = timelineThumb.value;
     },
     onActive: (e, ctx) => {
       timelineThumb.value = Math.max(30, Math.min(e.translationX + ctx.startX, 340));
-      let time = Math.floor((timelineThumb.value / (SCREEN_WIDTH - 60 - 48)) * selectedVideo.duration)
+      let time = Math.floor((timelineThumb.value / (SCREEN_WIDTH - 60 - 48)) * (selectedVideo.duration || 0))
       console.log('timelineThumb', time)
       runOnJS(seekVal)(time)
     },
@@ -127,7 +132,7 @@ export default function VideoEditorScreen({ navigation, route }: propsType) {
       tempPosition.value = position.value;
     },
   });
-  const gestureHandler2 = useAnimatedGestureHandler({
+  const gestureHandler2 = useAnimatedGestureHandler<PanGestureHandlerGestureEvent, ContextType>({
     onStart: (_, ctx) => {
       ctx.startX = rightThumb.value;
     },
@@ -160,8 +165,8 @@ export default function VideoEditorScreen({ navigation, route }: propsType) {
     transform: [{ translateX: seekableValue.value }],
   }));
 
-  const format = seconds => {
-    let mins = parseInt(seconds / 60)
+  const format = (seconds: number) => {
+    let mins = (seconds / 60)
       .toString()
       .padStart(2, '0');
     let secs = (Math.trunc(seconds) % 60).toString().padStart(2, '0');
@@ -181,7 +186,23 @@ export default function VideoEditorScreen({ navigation, route }: propsType) {
 
   const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
   const minLabelText = useAnimatedProps(() => {
-    let time = Math.floor((leftThumb.value / (SCREEN_WIDTH - 60 - 48)) * selectedVideo.duration)
+    let time = Math.floor((leftThumb.value / (SCREEN_WIDTH - 60 - 48)) * (selectedVideo.duration || 0))
+    console.log('StartTIme', time)
+    runOnJS(seekVal)(time)
+    let h = 0;
+    let m = 0;
+    let s = 0;
+    h = Math.floor(time / 3600);
+    m = Math.floor(time % 3600 / 60);
+    s = Math.floor(time % 3600 % 60);
+    return {
+      text: `${h}:${m}:${s}`,
+    };
+  });
+
+  const maxLabelText = useAnimatedProps(() => {
+    let time = Math.floor((((SCREEN_WIDTH - 60 - 48) + rightThumb.value) / (SCREEN_WIDTH - 60 - 48)) * (selectedVideo.duration || 0))
+    console.log('EndTIme', time)
     runOnJS(seekVal)(time)
     let h = 0;
     let m = 0;
@@ -189,69 +210,45 @@ export default function VideoEditorScreen({ navigation, route }: propsType) {
     h = Math.floor(time / 3600);
     m = Math.floor(time % 3600 / 60);
     s = Math.floor(time % 3600 % 60);
+    leftTrimValueRef.current = `${h}:${m}:${s}`
     return {
       text: `${h}:${m}:${s}`,
     };
-
   });
 
-  const maxLabelText = useAnimatedProps(() => {
-    let time = Math.floor((((SCREEN_WIDTH - 60 - 48) + rightThumb.value) / (SCREEN_WIDTH - 60 - 48)) * selectedVideo.duration)
+  const getStartTimeMS = () => {
+    let time = Math.floor((leftThumb.value / (SCREEN_WIDTH - 60 - 48)) * (selectedVideo.duration || 0))
+    return time;
+  }
 
-    runOnJS(seekVal)(time)
+  const getEndTimeMS = () => {
+    let time = Math.floor((((SCREEN_WIDTH - 60 - 48) + rightThumb.value) / (SCREEN_WIDTH - 60 - 48)) * (selectedVideo.duration || 0))
+    return time
+  }
+
+  const getTrimStartTime = (time: number) => {
+    // let time = 0 + Math.floor((val) / ((SCREEN_WIDTH) / ((20 - 0) / 1))) * 1
     let h = 0;
     let m = 0;
     let s = 0;
     h = Math.floor(time / 3600);
     m = Math.floor(time % 3600 / 60);
     s = Math.floor(time % 3600 % 60);
-    console.log('maxLabelText', time, h, m, s)
-    return {
-      text: `${h}:${m}:${s}`,
-    };
-  });
-
-  const getTrimTime = (val) => {
-    let time = 0 + Math.floor((val) / ((SCREEN_WIDTH) / ((20 - 0) / 1))) * 1
+    rightTrimValueRef.current = `${h}:${m}:${s}`
+    return `${h}:${m}:${s}`
+  }
+  const getTrimEndTime = (time: number) => {
+    // let time = 0 + Math.floor((val) / ((SCREEN_WIDTH) / ((20 - 0) / 1))) * 1
     let h = 0;
     let m = 0;
     let s = 0;
     h = Math.floor(time / 3600);
     m = Math.floor(time % 3600 / 60);
     s = Math.floor(time % 3600 % 60);
-    return `${h}:${m}:${s}`;
+    rightTrimValueRef.current = `${h}:${m}:${s}`
+    return `${h}:${m}:${s}`
+
   }
-
-  const startTrim = () => {
-    let outputImagePath = `${RNFS.DownloadDirectoryPath}/rn_video_trim_1.mp4`;
-    setOutputVideoPath(outputImagePath)
-    const ffmpegCommand = `-y -i ${selectedVideo.uri} -ss ${getTrimTime((position.value + leftThumb.value))} -to ${getTrimTime((position2.value + rightThumb.value))} -c:v copy -c:a copy ${outputImagePath}`;
-    console.log("Cmd", ffmpegCommand)
-    FFmpegKit.executeAsync(ffmpegCommand).then(async session => {
-      const state = FFmpegKitConfig.sessionStateToString(
-        await session.getState(),
-      );
-      const returnCode = await session.getReturnCode();
-      const failStackTrace = await session.getFailStackTrace();
-      const duration = await session.getDuration();
-      if (ReturnCode.isSuccess(returnCode)) {
-        successCallback(
-          outputImagePath.replace('%4d', String(1).padStart(4, 0)),
-        );
-      } else {
-        console.log(
-          `Encode failed with state ${state} and rc ${returnCode}.${(failStackTrace, '\\n')
-          }`,
-        );
-
-      }
-    });
-  };
-
-  const findDimention = (event) => {
-    const { x, y, width, height } = event.nativeEvent.layout;
-  }
-
 
   const handleTouch = (e: GestureResponderEvent) => {
     const { locationX } = e.nativeEvent;
@@ -264,7 +261,7 @@ export default function VideoEditorScreen({ navigation, route }: propsType) {
     }
   }
 
-  console.log('Frames', frames)
+  console.log('Frames', selectedVideo)
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={styles.container}>
@@ -282,16 +279,16 @@ export default function VideoEditorScreen({ navigation, route }: propsType) {
             }}>
               <AnimatedTextInput
                 style={{ color: '#FFFFFF' }}
-                animatedProps={minLabelText}
+                animatedProps={minLabelText as any}
                 editable={false}
-                defaultValue={'00.00.00'}
+                defaultValue={leftTrimValueRef.current}
               />
               <Text style={{ color: '#FFFFFF' }}>/</Text>
               <AnimatedTextInput
                 style={{ color: '#FFFFFF' }}
-                animatedProps={minLabelText}
+                animatedProps={maxLabelText as any}
                 editable={false}
-                defaultValue={`${Math.floor((selectedVideo.duration / 3600))}:${Math.floor(selectedVideo.duration % 3600 / 60)}:${Math.floor(selectedVideo.duration % 3600 % 60)}`}
+                defaultValue={rightTrimValueRef.current}
               />
             </View>
             <View style={{ position: 'absolute', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
@@ -311,14 +308,11 @@ export default function VideoEditorScreen({ navigation, route }: propsType) {
                 </Pressable>
               )}
             </View>
-            <AnimatedTextInput
+            <Text
               style={{ color: '#FFFFFF' }}
-              animatedProps={maxLabelText}
-              editable={false}
-              defaultValue={`${Math.floor((selectedVideo.duration / 3600))}:${Math.floor(selectedVideo.duration % 3600 / 60)}:${Math.floor(selectedVideo.duration % 3600 % 60)}`}
-            />
+            >{rightTrimValueRef.current}</Text>
           </Animated.View>
-          <View style={{ marginBottom: 30 }} onLayout={findDimention}>
+          <View style={{ marginBottom: 30 }}>
             {selectedVideo && (
               <View style={{ width: '100%', height: 80, position: 'relative' }}>
                 <Animated.ScrollView
@@ -434,15 +428,22 @@ export default function VideoEditorScreen({ navigation, route }: propsType) {
 
             }}>
             <Text onPress={() => navigation.goBack()} style={{ color: '#FFFFFF' }}>Cancel</Text>
-            <Text style={{ color: '#FFFFFF' }} onPress={startTrim}>Save</Text>
+            <Text style={{ color: '#FFFFFF' }} onPress={() => {
+              let start = getStartTimeMS()
+              let end = getEndTimeMS()
+              let startTime = getSecToTime(start)
+              let endTime = getSecToTime(end)
+              let total = (end - start) * 1000
+              navigation.navigate('Process', { processProps: { startTime, endTime, url: selectedVideo.uri || '', duration: total, startTimeS: start * 1000, thumbnail: frames[0] } })
+            }}>Save</Text>
           </View>
         </Animated.View>
         <Animated.View style={[{ flexDirection: 'row', gap: 10, marginHorizontal: 10, position: 'absolute', bottom: 0, zIndex: 99, left: 0, }, buttonStyle]}>
-          <ThemeButton style={{ zIndex: 1, flex: 1, backgroundColor: '#FFFFFF', }} typoStyle={{ fontWeight: 'bold', color: '#000' }}>Back</ThemeButton>
+          <ThemeButton onPress={() => { }} style={{ zIndex: 1, flex: 1, backgroundColor: '#FFFFFF', }} typoStyle={{ fontWeight: 'bold', color: '#000' }}>Back</ThemeButton>
           <ThemeButton onPress={handleEdit} style={{ zIndex: 1, flex: 1, backgroundColor: '#FE2C55', }} typoStyle={{ fontWeight: 'bold', color: '#FFFFFF' }}>Edit</ThemeButton>
         </Animated.View>
       </View>
-    </GestureHandlerRootView >
+    </GestureHandlerRootView>
   );
 }
 

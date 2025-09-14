@@ -26,10 +26,20 @@ async function safeDelete(path: string) {
 
 export async function cleanupAllOldFrames() {
   const files = await RNFS.readDir(RNFS.CachesDirectoryPath);
-  const frameFiles = files.filter(file => file.name.endsWith('.jpg') || file.name.endsWith('.mp4'));
+  const frameFiles = files.filter(file => file.name.endsWith('.jpg'));
   console.log('Old frames deleted:', frameFiles,files);
 
   await Promise.all(frameFiles.map(file => safeDelete('file://'+file.path)));
   console.log('Old frames deleted:', frameFiles.length);
+}
+
+export const getSecToTime = (time:number)=>{
+ let h = 0;
+    let m = 0;
+    let s = 0;
+    h = Math.floor(time / 3600);
+    m = Math.floor(time % 3600 / 60);
+    s = Math.floor(time % 3600 % 60);
+    return `${h}:${m}:${s}`
 }
 

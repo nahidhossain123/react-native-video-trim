@@ -1,13 +1,21 @@
 import { View, Text, Dimensions, StyleSheet, Image } from 'react-native'
 import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react'
-import Animated, { interpolate, runOnJS, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
+import Animated, { interpolate, runOnJS, SharedValue, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Video from 'react-native-video';
+import { Asset } from 'react-native-image-picker';
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
-const VideoPlayer = forwardRef(({ selectedVideo, onVideoLoad, dragY, }, ref) => {
+
+export type ChildFunctionsRefType = {
+    toggleVideoSize: () => void,
+    onSeek: (time: number) => void,
+}
+export type ChildFunctionsPropsType = { selectedVideo: Asset, onVideoLoad: () => void, dragY: SharedValue<number>, }
+
+const VideoPlayer = forwardRef<ChildFunctionsRefType, ChildFunctionsPropsType>(({ selectedVideo, onVideoLoad, dragY, }, ref) => {
     const snapHeight = SCREEN_HEIGHT / 1.5;
     const [isPaused, setIsPaused] = useState(true)
-    const videoRef = useRef()
+    const videoRef = useRef<Video>(null)
     const offsetY = useSharedValue(0); // persist position after each drag
     const [minimized, setMinimized] = useState(false);
 
@@ -18,7 +26,8 @@ const VideoPlayer = forwardRef(({ selectedVideo, onVideoLoad, dragY, }, ref) => 
 
     const onSeek = (time: number) => {
         setIsPaused(true)
-        videoRef?.current?.seek(time)
+
+
     }
 
     const panGesture = Gesture.Pan()
@@ -66,7 +75,6 @@ const VideoPlayer = forwardRef(({ selectedVideo, onVideoLoad, dragY, }, ref) => 
             <GestureDetector gesture={panGesture}>
                 {selectedVideo?.uri && (<Video
                     ref={videoRef}
-
                     paused={isPaused}
                     muted={true}
                     source={{

@@ -61,7 +61,7 @@ const OnBoardingScreen = ({ navigation }: propsType) => {
                         } else {
                             navigation.replace('Home')
                         }
-                    }} style={{ borderRadius: 200, paddingHorizontal: 30, backgroundColor: '#FFF', flexDirection: "row", gap: 10 }}>
+                    }} style={{ borderRadius: 200, paddingHorizontal: 30, backgroundColor: '#FFF', flexDirection: "row", gap: 10 }} typoStyle={{ color: 'gray' }}>
                         Continue
                     </ThemeButton>
                 </View>

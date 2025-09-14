@@ -5,6 +5,8 @@ import { SPLASH_SCREEN_KEYS } from '../storage/keys/AppKeys';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import VideoEditorScreen from '../screens/VideoEditorScreen';
 import OnBoardingScreen from '../screens/OnBoardingScreen';
+import ProcessScreen from '../screens/ProcessScreen';
+import SaveScreen from '../screens/SaveScreen';
 
 const Stack = createStackNavigator();
 
@@ -33,6 +35,8 @@ const StackNavigator = () => {
     {isFirstLaunch &&(<Stack.Screen name='OnboardingScreen' component={OnBoardingScreen} />)}
     <Stack.Screen name='Home' component={HomeScreen} />
      <Stack.Screen name='Video' component={VideoEditorScreen} />
+     <Stack.Screen name='Process' component={ProcessScreen} />
+     <Stack.Screen name='Files' component={SaveScreen} />
    </Stack.Navigator>
   )
 }
