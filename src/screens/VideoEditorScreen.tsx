@@ -187,7 +187,6 @@ export default function VideoEditorScreen({ navigation, route }: propsType) {
   const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
   const minLabelText = useAnimatedProps(() => {
     let time = Math.floor((leftThumb.value / (SCREEN_WIDTH - 60 - 48)) * (selectedVideo.duration || 0))
-    console.log('StartTIme', time)
     runOnJS(seekVal)(time)
     let h = 0;
     let m = 0;
@@ -202,7 +201,6 @@ export default function VideoEditorScreen({ navigation, route }: propsType) {
 
   const maxLabelText = useAnimatedProps(() => {
     let time = Math.floor((((SCREEN_WIDTH - 60 - 48) + rightThumb.value) / (SCREEN_WIDTH - 60 - 48)) * (selectedVideo.duration || 0))
-    console.log('EndTIme', time)
     runOnJS(seekVal)(time)
     let h = 0;
     let m = 0;
@@ -210,7 +208,6 @@ export default function VideoEditorScreen({ navigation, route }: propsType) {
     h = Math.floor(time / 3600);
     m = Math.floor(time % 3600 / 60);
     s = Math.floor(time % 3600 % 60);
-    leftTrimValueRef.current = `${h}:${m}:${s}`
     return {
       text: `${h}:${m}:${s}`,
     };

@@ -22,7 +22,6 @@ export default function ProcessScreen({ navigation, route }: propsType) {
     const { startTime, endTime, url, thumbnail, duration, startTimeS, prevSize } = route.params.processProps
 
     const startTrim = () => {
-        const [modalVisible, setModalVisible] = useState(false);
         let timeStamp = Date.now()
         let outPutName = `rn_video_trim_${timeStamp}.mp4`
         let outputImagePath = `${RNFS.DownloadDirectoryPath}/${outPutName}`;
@@ -61,7 +60,7 @@ export default function ProcessScreen({ navigation, route }: propsType) {
 
     useEffect(() => {
         activateKeepAwake();
-        //startTrim()
+        startTrim()
     }, [])
     const toggleModal = () => {
         console.log('Toogle')
