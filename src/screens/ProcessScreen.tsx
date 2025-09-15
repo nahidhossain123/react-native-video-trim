@@ -69,7 +69,7 @@ export default function ProcessScreen({ navigation, route }: propsType) {
     }
 
     return (
-        <ScreenLayout backgroundColor='#FFF'>
+        <ScreenLayout backgroundColor='#FFF' statusBg='dark-content'>
             <View style={{}}>
                 <LottieView style={{ width: '100%', height: 300 }} source={require('../asset/lottie-animations/Loading.json')} autoPlay loop />
                 <Text style={{ textAlign: 'center', color: 'gray' }}>Processing your files. Please wait...</Text>

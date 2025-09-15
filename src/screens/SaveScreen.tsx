@@ -8,7 +8,7 @@ type propsType = NativeStackScreenProps<RootStackParamList, 'Files'>
 export default function SaveScreen({ navigation, route }: propsType) {
     const { url, name, thumbnail, duration, prevSize, currentSize } = route.params.filesProps
     return (
-        <ScreenLayout backgroundColor='#FFF'>
+        <ScreenLayout backgroundColor='#e4e4e4ff' statusBg='dark-content'>
             <View style={{ paddingHorizontal: 10 }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
                     <Pressable onPress={() => {
@@ -18,10 +18,10 @@ export default function SaveScreen({ navigation, route }: propsType) {
                     </Pressable>
                     <Text style={{ fontSize: 20, color: 'gray' }}>Saved Files</Text>
                 </View>
-                <View style={{ position: 'relative', flexDirection: 'row', justifyContent: 'space-between', marginTop: 20, backgroundColor: '#ededed', padding: 5, borderRadius: 20, gap: 10 }}>
+                <View style={{ position: 'relative', flexDirection: 'row', justifyContent: 'space-between', marginTop: 20, backgroundColor: '#ededed', borderRadius: 20, gap: 10 }}>
                     <Image source={{ uri: thumbnail }} style={{ borderRadius: 20 }} alt='image' width={100} height={100} />
                     <Text style={{ position: 'absolute', left: 10, bottom: 10, zIndex: 10, color: 'white' }}>{duration}</Text>
-                    <View style={{ flex: 1 }}>
+                    <View style={{ flex: 1, padding: 5 }}>
                         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 3 }}>
                             <Text style={{ fontSize: 16, fontWeight: 'bold', color: 'gray' }}>{name}</Text>
                             <Text style={{ color: "gray" }}>{url}</Text>
@@ -31,7 +31,6 @@ export default function SaveScreen({ navigation, route }: propsType) {
                                 <Text style={{ fontSize: 12, fontWeight: 'bold', color: 'gray' }}>{currentSize} mB</Text>
                             </View>
                         </View>
-
                     </View>
                 </View>
             </View>

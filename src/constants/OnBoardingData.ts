@@ -1,4 +1,3 @@
-import { AnimationObject } from "react-native-reanimated";
 
 export interface OnboardingDataType{
     id:string,
