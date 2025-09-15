@@ -4,15 +4,16 @@ import Animated, { interpolate, runOnJS, SharedValue, useAnimatedStyle, useShare
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Video from 'react-native-video';
 import { Asset } from 'react-native-image-picker';
+import OptionButton from './ui/OptionButton';
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 
 export type ChildFunctionsRefType = {
     toggleVideoSize: () => void,
     onSeek: (time: number) => void,
 }
-export type ChildFunctionsPropsType = { selectedVideo: Asset, onVideoLoad: () => void, dragY: SharedValue<number>, }
+export type ChildFunctionsPropsType = { selectedVideo: Asset, onVideoLoad: () => void, dragY: SharedValue<number>, onSave: () => void }
 
-const VideoPlayer = forwardRef<ChildFunctionsRefType, ChildFunctionsPropsType>(({ selectedVideo, onVideoLoad, dragY, }, ref) => {
+const VideoPlayer = forwardRef<ChildFunctionsRefType, ChildFunctionsPropsType>(({ selectedVideo, onVideoLoad, dragY, onSave }, ref) => {
     const snapHeight = SCREEN_HEIGHT / 1.5;
     const [isPaused, setIsPaused] = useState(false)
     const videoRef = useRef<Video>(null)
@@ -92,42 +93,15 @@ const VideoPlayer = forwardRef<ChildFunctionsRefType, ChildFunctionsPropsType>((
                 />)}
             </GestureDetector>
             <Animated.View style={[{ position: 'absolute', right: 10, top: 50, alignItems: 'flex-end', gap: 25 }, buttonStyle]}>
-                <View style={styles.btnContainer}>
-                    <Text onPress={toggleVideoSize} style={styles.textBtnStyle}>Edit</Text>
-                    <Image style={{ width: 25, height: 25 }} source={require('../asset/icons/trim.png')} />
-                </View>
-                <View style={styles.btnContainer}>
-                    <Text style={styles.textBtnStyle}>Template</Text>
-                    <Image style={{ width: 25, height: 25 }} source={require('../asset/icons/youtube.png')} />
-                </View>
-                <View style={styles.btnContainer}>
-                    <Text style={styles.textBtnStyle}>Text</Text>
-                    <Image style={{ width: 25, height: 25 }} source={require('../asset/icons/font.png')} />
-                </View>
-                <View style={styles.btnContainer}>
-                    <Text style={styles.textBtnStyle}>Stickers</Text>
-                    <Image style={{ width: 25, height: 25 }} source={require('../asset/icons/sticker.png')} />
-                </View>
-                <View style={styles.btnContainer}>
-                    <Text style={styles.textBtnStyle}>Effects</Text>
-                    <Image style={{ width: 25, height: 25 }} source={require('../asset/icons/effects.png')} />
-                </View>
-                <View style={styles.btnContainer}>
-                    <Text style={styles.textBtnStyle}>Filters</Text>
-                    <Image style={{ width: 25, height: 25 }} source={require('../asset/icons/filters.png')} />
-                </View>
-                <View style={styles.btnContainer}>
-                    <Text style={styles.textBtnStyle}>Voice</Text>
-                    <Image style={{ width: 25, height: 25 }} source={require('../asset/icons/voice-search.png')} />
-                </View>
-                <View style={styles.btnContainer}>
-                    <Text style={styles.textBtnStyle}>Captions</Text>
-                    <Image style={{ width: 25, height: 25 }} source={require('../asset/icons/caption.png')} />
-                </View>
-                <View style={styles.btnContainer}>
-                    <Text style={styles.textBtnStyle}>Save</Text>
-                    <Image style={{ width: 25, height: 25 }} source={require('../asset/icons/download.png')} />
-                </View>
+                <OptionButton onPress={toggleVideoSize} icon={require('../asset/icons/trim.png')}>Edit</OptionButton>
+                <OptionButton onPress={toggleVideoSize} icon={require('../asset/icons/youtube.png')}>Template</OptionButton>
+                <OptionButton onPress={toggleVideoSize} icon={require('../asset/icons/font.png')}>Text</OptionButton>
+                <OptionButton onPress={toggleVideoSize} icon={require('../asset/icons/sticker.png')}>Stickers</OptionButton>
+                <OptionButton onPress={toggleVideoSize} icon={require('../asset/icons/effects.png')}>Effects</OptionButton>
+                <OptionButton onPress={toggleVideoSize} icon={require('../asset/icons/filters.png')}>Filters</OptionButton>
+                <OptionButton onPress={toggleVideoSize} icon={require('../asset/icons/voice-search.png')}>Voice</OptionButton>
+                <OptionButton onPress={toggleVideoSize} icon={require('../asset/icons/caption.png')}>Caption</OptionButton>
+                <OptionButton onPress={onSave} icon={require('../asset/icons/download.png')}>Save</OptionButton>
             </Animated.View>
         </Animated.View>
     )

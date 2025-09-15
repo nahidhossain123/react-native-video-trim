@@ -1,25 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, Dimensions, Text, Image, Pressable, TextInput, GestureResponderEvent, StatusBar } from 'react-native';
-import Video from 'react-native-video';
+import { View, StyleSheet, Dimensions, Text, Image, Pressable, TextInput, GestureResponderEvent } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   interpolate,
-  withTiming,
   runOnJS,
   useAnimatedProps,
   useAnimatedScrollHandler,
   useAnimatedGestureHandler,
 } from 'react-native-reanimated';
-import RNFS, { stat } from 'react-native-fs';
-import { GestureDetector, Gesture, GestureHandlerRootView, PanGestureHandler, PanGestureHandlerGestureEvent } from 'react-native-gesture-handler';
+import { GestureHandlerRootView, PanGestureHandler, PanGestureHandlerGestureEvent } from 'react-native-gesture-handler';
 import ThemeButton from '../component/ui/ThemeButton';
-import { FFmpegKit, FFmpegKitConfig, ReturnCode } from 'ffmpeg-kit-react-native';
 import { byteToMB, cleanupAllOldFrames, extractFrame, getSecToTime } from '../utils/functions';
 import VideoPlayer, { ChildFunctionsRefType } from '../component/VideoPlayer';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/type';
-import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import ScreenLayout from '../component/ui/ScreenLayout';
 
 type ContextType = {
@@ -208,12 +203,21 @@ export default function VideoEditorScreen({ navigation, route }: propsType) {
     }
   }
 
-  console.log('Frames', selectedVideo)
+  const handleSave = () => {
+    let start = getStartTimeMS()
+    let end = getEndTimeMS()
+    let startTime = getSecToTime(start)
+    let endTime = getSecToTime(end)
+    let total = (end - start) * 1000
+    let prevSize = byteToMB(selectedVideo.fileSize || 0)
+    navigation.replace('Process', { processProps: { startTime, endTime, url: selectedVideo.uri || '', duration: total, startTimeS: start * 1000, thumbnail: frames[0], prevSize } })
+  }
+
   return (
     <GestureHandlerRootView >
       <ScreenLayout backgroundColor='#000'>
         <View style={{ ...styles.container }}>
-          <VideoPlayer ref={videoPlayerRef} selectedVideo={selectedVideo} onVideoLoad={handleExtractFrame} dragY={dragY} />
+          <VideoPlayer ref={videoPlayerRef} selectedVideo={selectedVideo} onVideoLoad={handleExtractFrame} dragY={dragY} onSave={handleSave} />
           <Animated.View style={[{ paddingHorizontal: 20 }, panelStyle]}>
             <Animated.View
               style={{
@@ -376,15 +380,7 @@ export default function VideoEditorScreen({ navigation, route }: propsType) {
 
               }}>
               <Text onPress={() => navigation.goBack()} style={{ color: '#FFFFFF' }}>Cancel</Text>
-              <Text style={{ color: '#FFFFFF' }} onPress={() => {
-                let start = getStartTimeMS()
-                let end = getEndTimeMS()
-                let startTime = getSecToTime(start)
-                let endTime = getSecToTime(end)
-                let total = (end - start) * 1000
-                let prevSize = byteToMB(selectedVideo.fileSize || 0)
-                navigation.replace('Process', { processProps: { startTime, endTime, url: selectedVideo.uri || '', duration: total, startTimeS: start * 1000, thumbnail: frames[0], prevSize } })
-              }}>Save</Text>
+              <Text style={{ color: '#FFFFFF' }} onPress={handleSave}>Save</Text>
             </View>
           </Animated.View>
           <Animated.View style={[{ flexDirection: 'row', gap: 5, marginHorizontal: 10, position: 'absolute', bottom: 0, zIndex: 99, left: 0, }, buttonStyle]}>
