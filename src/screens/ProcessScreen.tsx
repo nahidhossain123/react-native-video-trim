@@ -11,6 +11,7 @@ import { activateKeepAwake, deactivateKeepAwake } from '@sayem314/react-native-k
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import ThemeButton from '../component/ui/ThemeButton';
 import ThemeModal, { ThemeModalRef } from '../component/ui/ThemeModal';
+import ScreenLayout from '../component/ui/ScreenLayout';
 type propsType = NativeStackScreenProps<RootStackParamList, 'Process'>
 export default function ProcessScreen({ navigation, route }: propsType) {
     const { width: SCREEN_WIDTH } = useWindowDimensions()
@@ -68,47 +69,45 @@ export default function ProcessScreen({ navigation, route }: propsType) {
     }
 
     return (
-        <SafeAreaProvider>
-            <SafeAreaView>
-                <View style={{}}>
-                    <LottieView style={{ width: '100%', height: 300 }} source={require('../asset/lottie-animations/Loading.json')} autoPlay loop />
-                    <Text style={{ textAlign: 'center' }}>Processing your files. Please wait...</Text>
-                </View>
+        <ScreenLayout backgroundColor='#FFF'>
+            <View style={{}}>
+                <LottieView style={{ width: '100%', height: 300 }} source={require('../asset/lottie-animations/Loading.json')} autoPlay loop />
+                <Text style={{ textAlign: 'center', color: 'gray' }}>Processing your files. Please wait...</Text>
+            </View>
 
-                <View style={{ marginHorizontal: 10, marginTop: 20, }}>
-                    <View style={{ flexDirection: "row", justifyContent: 'space-between' }}>
-                        <View style={{ flexDirection: "row", alignItems: 'center', gap: 5 }}>
-                            <CustomSwitch active={true} inactiveBgColor='#ccccccff' activeBgColor='#7DC0C7' onToggle={(isActive) => {
-                                if (isActive) {
-                                    deactivateKeepAwake();
-                                } else {
-                                    activateKeepAwake();
-                                }
-                            }} />
-                            <Text style={{}}>Keep Screen On</Text>
-                        </View>
+            <View style={{ marginHorizontal: 10, marginTop: 20, }}>
+                <View style={{ flexDirection: "row", justifyContent: 'space-between' }}>
+                    <View style={{ flexDirection: "row", alignItems: 'center', gap: 5 }}>
+                        <CustomSwitch active={true} inactiveBgColor='#ccccccff' activeBgColor='#7DC0C7' onToggle={(isActive) => {
+                            if (isActive) {
+                                deactivateKeepAwake();
+                            } else {
+                                activateKeepAwake();
+                            }
+                        }} />
+                        <Text style={{ color: 'gray' }}>Keep Screen On</Text>
+                    </View>
+                    <Pressable onPress={toggleModal}>
+                        <Image source={require('../asset/info.png')} style={{ height: 30, width: 30 }} alt='image' />
+                    </Pressable>
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 10, backgroundColor: '#f8f8f8ff', paddingVertical: 5, paddingRight: 5, borderRadius: 20 }}>
+                    <Image source={{ uri: thumbnail }} style={{ borderRadius: 20 }} alt='image' width={150} height={150} />
+                    <Text style={{ textAlign: 'center', fontSize: 50, color: 'gray' }}>{progress}%</Text>
+                </View>
+            </View>
+            <ThemeModal ref={modalRef}>
+                <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: 'gray' }}>Keep screen on</Text>
+                    <Text style={{ marginVertical: 20, color: 'gray' }}>To ensure fast video processing, keep the screen on.</Text>
+                    <Text style={{ color: 'gray' }}>Video processing slows down significantly when the screen turns off.</Text>
+                    <View style={{ flexDirection: 'row', justifyContent: "flex-end", marginVertical: 10 }}>
                         <Pressable onPress={toggleModal}>
-                            <Image source={require('../asset/info.png')} style={{ height: 30, width: 30 }} alt='image' />
+                            <Text style={{ fontSize: 16, fontWeight: 'bold', color: 'gray' }}>OK</Text>
                         </Pressable>
                     </View>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 10, backgroundColor: '#ededed', paddingVertical: 5, paddingRight: 5, borderRadius: 20 }}>
-                        <Image source={{ uri: thumbnail }} style={{ borderRadius: 20 }} alt='image' width={150} height={150} />
-                        <Text style={{ textAlign: 'center', fontSize: 50 }}>{progress}%</Text>
-                    </View>
                 </View>
-                <ThemeModal ref={modalRef}>
-                    <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10 }}>
-                        <Text style={{ fontSize: 16, fontWeight: 'bold' }}>Keep screen on</Text>
-                        <Text style={{ marginVertical: 20 }}>To ensure fast video processing, keep the screen on.</Text>
-                        <Text style={{}}>Video processing slows down significantly when the screen turns off.</Text>
-                        <View style={{ flexDirection: 'row', justifyContent: "flex-end", marginVertical: 10 }}>
-                            <Pressable onPress={toggleModal}>
-                                <Text style={{ fontSize: 16, fontWeight: 'bold' }}>OK</Text>
-                            </Pressable>
-                        </View>
-                    </View>
-                </ThemeModal>
-            </SafeAreaView>
-        </SafeAreaProvider>
+            </ThemeModal>
+        </ScreenLayout>
     )
 }

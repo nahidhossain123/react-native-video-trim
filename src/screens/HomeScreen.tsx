@@ -10,6 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { cleanupAllOldFrames } from '../utils/functions'
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from '../navigation/type'
+import ScreenLayout from '../component/ui/ScreenLayout'
 
 type propsType = NativeStackScreenProps<RootStackParamList, "Home">
 
@@ -121,7 +122,7 @@ const HomeScreen = ({ navigation }: propsType) => {
     }, [])
 
     return (
-        <SafeAreaView style={styles.container}>
+        <ScreenLayout backgroundColor='#000'>
             <ThemeText style={styles.textStyle}>Trim Video</ThemeText>
             <TouchableOpacity onPress={openVideoPicker} style={styles.imageSelect}>
                 <View style={styles.imageContainer}>
@@ -166,7 +167,7 @@ const HomeScreen = ({ navigation }: propsType) => {
             </TouchableOpacity>
 
 
-        </SafeAreaView>
+        </ScreenLayout>
     )
 }
 

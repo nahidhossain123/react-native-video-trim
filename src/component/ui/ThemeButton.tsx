@@ -14,7 +14,7 @@ export default ThemeButton
 
 const styles = StyleSheet.create({
   buttonStyle: {
-    borderRadius: 5,
+    borderRadius: 8,
     backgroundColor: '#FFCDD2',
     padding: 10,
     fontSize: 18

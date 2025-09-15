@@ -14,7 +14,7 @@ export type ChildFunctionsPropsType = { selectedVideo: Asset, onVideoLoad: () =>
 
 const VideoPlayer = forwardRef<ChildFunctionsRefType, ChildFunctionsPropsType>(({ selectedVideo, onVideoLoad, dragY, }, ref) => {
     const snapHeight = SCREEN_HEIGHT / 1.5;
-    const [isPaused, setIsPaused] = useState(true)
+    const [isPaused, setIsPaused] = useState(false)
     const videoRef = useRef<Video>(null)
     const offsetY = useSharedValue(0); // persist position after each drag
     const [minimized, setMinimized] = useState(false);
@@ -26,8 +26,7 @@ const VideoPlayer = forwardRef<ChildFunctionsRefType, ChildFunctionsPropsType>((
 
     const onSeek = (time: number) => {
         setIsPaused(true)
-
-
+        videoRef?.current?.seek(time)
     }
 
     const panGesture = Gesture.Pan()
@@ -69,7 +68,7 @@ const VideoPlayer = forwardRef<ChildFunctionsRefType, ChildFunctionsPropsType>((
             runOnJS(setIsPaused)(false);
         }
     };
-
+    console.log('IsPaused', isPaused)
     return (
         <Animated.View style={[styles.videoContainer, videoStyle]}>
             <GestureDetector gesture={panGesture}>
