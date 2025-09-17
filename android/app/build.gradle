@@ -108,9 +108,10 @@ android {
         //     proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         // }
          release {
+               shrinkResources true //Added by me to reduce apk size
+            minifyEnabled true // Set to true for production to enable code obfuscation
             signingConfig signingConfigs.release
-            minifyEnabled false // Set to true for production to enable code obfuscation
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro' 
         }
     }
 }
